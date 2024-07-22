@@ -15,8 +15,14 @@ const app = express();
 const PORT = 8001;
 
 // CORS 설정
-app.use(cors());
-app.use(express.json());
+const corsOptions = {
+  origin: "*", // 든 오리진을 허용. 더 나은 보안을 위해 여기에서 프론트엔드 도메인을 지정할 수 있다.
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
 
 // 정적 파일 서빙 설정
 app.use("/frontend", express.static(path.join(__dirname, "frontend")));
