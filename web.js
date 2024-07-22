@@ -8,24 +8,31 @@ import { fileURLToPath } from "url";
 
 dotenv.config();
 
+// __dirname을 ES 모듈에서 사용 가능하도록 설정
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 8001;
 
+// CORS 설정
 app.use(cors());
 app.use(express.json());
 
+// 정적 파일 서빙 설정
 app.use(serveStatic(path.join(__dirname, "frontend")));
 
+// 프록시 엔드포인트 설정
 const API_KEY = process.env.API_KEY;
 const BASE_PATH = "https://api.neople.co.kr";
 
+//엔드포인트 테스트
 app.get("/api/test", async (req, res) => {
   try {
     const response = await axios.get(`${BASE_PATH}/cy/characters`, {
-      params: { apikey: API_KEY },
+      params: {
+        apikey: API_KEY,
+      },
     });
     res.json(response.data);
   } catch (error) {
@@ -34,11 +41,15 @@ app.get("/api/test", async (req, res) => {
   }
 });
 
+// 프록시 엔드포인트 예시
 app.get("/api/cy/players", async (req, res) => {
   try {
     const { nickname } = req.query;
     const response = await axios.get(`${BASE_PATH}/cy/players`, {
-      params: { nickname, apikey: API_KEY },
+      params: {
+        nickname,
+        apikey: API_KEY,
+      },
     });
     res.json(response.data);
   } catch (error) {
@@ -53,7 +64,9 @@ app.get("/api/cy/players/:playerId", async (req, res) => {
   try {
     const { playerId } = req.params;
     const response = await axios.get(`${BASE_PATH}/cy/players/${playerId}`, {
-      params: { apikey: API_KEY },
+      params: {
+        apikey: API_KEY,
+      },
     });
     res.json(response.data);
   } catch (error) {
@@ -71,7 +84,13 @@ app.get("/api/cy/players/:playerId/matches", async (req, res) => {
     const response = await axios.get(
       `${BASE_PATH}/cy/players/${playerId}/matches`,
       {
-        params: { gameTypeId, startDate, endDate, limit, apikey: API_KEY },
+        params: {
+          gameTypeId,
+          startDate,
+          endDate,
+          limit,
+          apikey: API_KEY,
+        },
       }
     );
     res.json(response.data);
@@ -79,7 +98,7 @@ app.get("/api/cy/players/:playerId/matches", async (req, res) => {
     console.error("Neople API에서 데이터를 가져오는 중 오류 발생:", error);
     res
       .status(500)
-      .json({ error: "Neople API에서 데이터를 가져오지 못했습니다." });
+      .json({ error: "FNeople API에서 데이터를 가져오지 못했습니다." });
   }
 });
 
@@ -87,7 +106,9 @@ app.get("/api/cy/matches/:matchId", async (req, res) => {
   try {
     const { matchId } = req.params;
     const response = await axios.get(`${BASE_PATH}/cy/matches/${matchId}`, {
-      params: { apikey: API_KEY },
+      params: {
+        apikey: API_KEY,
+      },
     });
     res.json(response.data);
   } catch (error) {
@@ -101,7 +122,9 @@ app.get("/api/cy/matches/:matchId", async (req, res) => {
 app.get("/api/cy/characters", async (req, res) => {
   try {
     const response = await axios.get(`${BASE_PATH}/cy/characters`, {
-      params: { apikey: API_KEY },
+      params: {
+        apikey: API_KEY,
+      },
     });
     res.json(response.data);
   } catch (error) {
@@ -121,7 +144,12 @@ app.get(
       const response = await axios.get(
         `${BASE_PATH}/cy/ranking/characters/${characterId}/${rankingType}`,
         {
-          params: { playerId, offset, limit, apikey: API_KEY },
+          params: {
+            playerId,
+            offset,
+            limit,
+            apikey: API_KEY,
+          },
         }
       );
       res.json(response.data);
@@ -134,8 +162,9 @@ app.get(
   }
 );
 
+// 모든 라우트를 index.html로 처리(리액트에서 처리), 최하단에 놓을 것
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/index.html"));
+  res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
 app.listen(PORT, () => {
