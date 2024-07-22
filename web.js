@@ -1,0 +1,180 @@
+import express from "express";
+import cors from "cors";
+//import mongoose from "mongoose";
+import axios from "axios";
+import dotenv from "dotenv";
+import path from "path";
+import serveStatic from "serve-static";
+import { fileURLToPath } from "url";
+
+dotenv.config();
+
+// __dirname을 ES 모듈에서 사용 가능하도록 설정
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = 8001;
+
+// CORS 설정
+app.use(cors());
+app.use(express.json());
+
+// MongoDB 연결
+/* const mongoURI = "your-mongodb-uri";  MongoDB URI를 여기에 입력하세요
+mongoose
+  .connect(mongoURI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err)); */
+
+// 정적 파일 서빙 설정
+app.use(serveStatic(path.join(__dirname, "frontend")));
+
+// 프록시 엔드포인트 설정
+const API_KEY = process.env.API_KEY;
+const BASE_PATH = "https://api.neople.co.kr";
+
+//엔드포인트 테스트
+app.get("/api/test", async (req, res) => {
+  try {
+    const response = await axios.get(`${BASE_PATH}/cy/characters`, {
+      params: {
+        apikey: API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching data from Neople API:", error);
+    res.status(500).json({ error: "Failed to fetch data from Neople API" });
+  }
+});
+
+// 프록시 엔드포인트 예시
+app.get("/api/cy/players", async (req, res) => {
+  try {
+    const { nickname } = req.query;
+    const response = await axios.get(`${BASE_PATH}/cy/players`, {
+      params: {
+        nickname,
+        apikey: API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Neople API에서 데이터를 가져오는 중 오류 발생:", error);
+    res
+      .status(500)
+      .json({ error: "Neople API에서 데이터를 가져오지 못했습니다." });
+  }
+});
+
+app.get("/api/cy/players/:playerId", async (req, res) => {
+  try {
+    const { playerId } = req.params;
+    const response = await axios.get(`${BASE_PATH}/cy/players/${playerId}`, {
+      params: {
+        apikey: API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Neople API에서 데이터를 가져오는 중 오류 발생:", error);
+    res
+      .status(500)
+      .json({ error: "FNeople API에서 데이터를 가져오지 못했습니다." });
+  }
+});
+
+app.get("/api/cy/players/:playerId/matches", async (req, res) => {
+  try {
+    const { playerId } = req.params;
+    const { gameTypeId, startDate, endDate, limit } = req.query;
+    const response = await axios.get(
+      `${BASE_PATH}/cy/players/${playerId}/matches`,
+      {
+        params: {
+          gameTypeId,
+          startDate,
+          endDate,
+          limit,
+          apikey: API_KEY,
+        },
+      }
+    );
+    res.json(response.data);
+  } catch (error) {
+    console.error("Neople API에서 데이터를 가져오는 중 오류 발생:", error);
+    res
+      .status(500)
+      .json({ error: "FNeople API에서 데이터를 가져오지 못했습니다." });
+  }
+});
+
+app.get("/api/cy/matches/:matchId", async (req, res) => {
+  try {
+    const { matchId } = req.params;
+    const response = await axios.get(`${BASE_PATH}/cy/matches/${matchId}`, {
+      params: {
+        apikey: API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Neople API에서 데이터를 가져오는 중 오류 발생:", error);
+    res
+      .status(500)
+      .json({ error: "FNeople API에서 데이터를 가져오지 못했습니다." });
+  }
+});
+
+app.get("/api/cy/characters", async (req, res) => {
+  try {
+    const response = await axios.get(`${BASE_PATH}/cy/characters`, {
+      params: {
+        apikey: API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Neople API에서 데이터를 가져오는 중 오류 발생:", error);
+    res
+      .status(500)
+      .json({ error: "FNeople API에서 데이터를 가져오지 못했습니다." });
+  }
+});
+
+app.get(
+  "/api/cy/ranking/characters/:characterId/:rankingType",
+  async (req, res) => {
+    try {
+      const { characterId, rankingType } = req.params;
+      const { playerId, offset, limit } = req.query;
+      const response = await axios.get(
+        `${BASE_PATH}/cy/ranking/characters/${characterId}/${rankingType}`,
+        {
+          params: {
+            playerId,
+            offset,
+            limit,
+            apikey: API_KEY,
+          },
+        }
+      );
+      res.json(response.data);
+    } catch (error) {
+      console.error("Neople API에서 데이터를 가져오는 중 오류 발생:", error);
+      res
+        .status(500)
+        .json({ error: "FNeople API에서 데이터를 가져오지 못했습니다." });
+    }
+  }
+);
+
+// 모든 라우트를 index.html로 처리(리액트에서 처리), 최하단에 놓을 것
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "index.html"));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
