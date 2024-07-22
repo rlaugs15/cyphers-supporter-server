@@ -3,7 +3,6 @@ import cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
 import path from "path";
-import serveStatic from "serve-static";
 import { fileURLToPath } from "url";
 
 dotenv.config();
@@ -20,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 // 정적 파일 서빙 설정
-app.use(serveStatic(path.join(__dirname, "frontend")));
+app.use("/frontend", express.static(path.join(__dirname, "frontend")));
 
 // 프록시 엔드포인트 설정
 const API_KEY = process.env.API_KEY;
