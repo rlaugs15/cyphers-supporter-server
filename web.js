@@ -30,6 +30,7 @@ app.use("/frontend", express.static(path.join(__dirname, "frontend")));
 // 프록시 엔드포인트 설정
 const API_KEY = process.env.API_KEY;
 const BASE_PATH = "https://api.neople.co.kr";
+console.log("API_KEY:", API_KEY);
 
 if (!API_KEY) {
   console.error("API_KEY is not defined");
