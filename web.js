@@ -15,7 +15,13 @@ const app = express();
 const PORT = 8001;
 
 // CORS 설정
-app.use(cors());
+const corsOptions = {
+  origin: "*", // 모든 도메인 허용
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // 정적 파일 서빙 설정
@@ -149,6 +155,7 @@ app.get(
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
