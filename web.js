@@ -15,14 +15,8 @@ const app = express();
 const PORT = 8001;
 
 // CORS 설정
-const corsOptions = {
-  origin: "*", // 든 오리진을 허용. 더 나은 보안을 위해 여기에서 프론트엔드 도메인을 지정할 수 있다.
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
+app.use(express.json());
 
 // 정적 파일 서빙 설정
 app.use("/frontend", express.static(path.join(__dirname, "frontend")));
@@ -32,8 +26,9 @@ const API_KEY = process.env.API_KEY;
 const BASE_PATH = "https://api.neople.co.kr";
 
 //엔드포인트 테스트
-app.get("/api/test", async (req, res) => {
+/* app.get("/api/test", async (req, res) => {
   try {
+    console.log("Making API call with key: ", API_KEY);
     const response = await axios.get(`${BASE_PATH}/cy/characters`, {
       params: {
         apikey: API_KEY,
@@ -44,7 +39,7 @@ app.get("/api/test", async (req, res) => {
     console.error("Error fetching data from Neople API:", error);
     res.status(500).json({ error: "Failed to fetch data from Neople API" });
   }
-});
+}); */
 
 // 프록시 엔드포인트 예시
 app.get("/api/cy/players", async (req, res) => {
@@ -154,7 +149,6 @@ app.get(
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
-
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
