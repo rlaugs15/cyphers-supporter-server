@@ -31,9 +31,6 @@ app.use("/frontend", express.static(path.join(__dirname, "frontend")));
 const API_KEY = process.env.API_KEY;
 const BASE_PATH = "https://api.neople.co.kr";
 
-// API 키가 제대로 로드되었는지 확인하는 로그 추가
-console.log("API_KEY:", API_KEY);
-
 if (!API_KEY) {
   console.error("API_KEY is not defined");
 }
