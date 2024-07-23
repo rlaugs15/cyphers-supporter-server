@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
+import { API_KEY } from "./config.js"; // config.js 파일에서 API_KEY를 불러옴
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -28,9 +29,8 @@ app.use(express.json());
 app.use("/frontend", express.static(path.join(__dirname, "frontend")));
 
 // 프록시 엔드포인트 설정
-const API_KEY = process.env.API_KEY;
+//const API_KEY = process.env.API_KEY;
 const BASE_PATH = "https://api.neople.co.kr";
-console.log("API_KEY:", API_KEY);
 
 if (!API_KEY) {
   console.error("API_KEY is not defined");
