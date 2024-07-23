@@ -31,23 +31,13 @@ app.use("/frontend", express.static(path.join(__dirname, "frontend")));
 const API_KEY = process.env.API_KEY;
 const BASE_PATH = "https://api.neople.co.kr";
 
-//엔드포인트 테스트
-/* app.get("/api/test", async (req, res) => {
-  try {
-    console.log("Making API call with key: ", API_KEY);
-    const response = await axios.get(`${BASE_PATH}/cy/characters`, {
-      params: {
-        apikey: API_KEY,
-      },
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching data from Neople API:", error);
-    res.status(500).json({ error: "Failed to fetch data from Neople API" });
-  }
-}); */
+// API 키가 제대로 로드되었는지 확인하는 로그 추가
+console.log("API_KEY:", API_KEY);
 
-// 프록시 엔드포인트 예시
+if (!API_KEY) {
+  console.error("API_KEY is not defined");
+}
+
 app.get("/api/cy/players", async (req, res) => {
   try {
     const { nickname } = req.query;
