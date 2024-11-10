@@ -1,5 +1,5 @@
 [[redirects]]
   from = "/proxy/*"
-  to = "https://cyphers-supporter/:splat"
+  to = ""https://api.neople.co.kr:splat"
   status = 200
   force = true
