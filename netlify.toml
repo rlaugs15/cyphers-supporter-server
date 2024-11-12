@@ -1,2 +1,5 @@
-[build]
-  functions = "netlify/functions"
+[[redirects]]
+  from = "/proxy/*"
+  to = "https://api.neople.co.kr:splat"
+  status = 200
+  force = true
